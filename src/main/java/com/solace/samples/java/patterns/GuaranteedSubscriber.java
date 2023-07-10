@@ -30,13 +30,16 @@ import com.solace.messaging.config.profile.ConfigurationProfile;
 import com.solace.messaging.receiver.PersistentMessageReceiver;
 import com.solace.messaging.resources.Queue;
 
+import com.solace.samples.java.Service.CallSmtpApi;
+import com.solace.samples.java.Service.CallSmtpApiImpl;
+
+
 /**
  * A sample application showing non-blocking subscriber for Guaranteed messages.
  * This application assumes a queue named <code>q_java_sub</code> has already been
  * created for it, and the topic subscription <code>solace/samples/&ast;/pers/></code>
  * has been added to it. 
  */
-
 public class GuaranteedSubscriber {
 
     private static final String SAMPLE_NAME = GuaranteedSubscriber.class.getSimpleName();
@@ -52,6 +55,7 @@ public class GuaranteedSubscriber {
 
     /** This is the main app.  Use this type of app for receiving Guaranteed messages (e.g. via a queue endpoint). */
     public static void main(String... args) throws InterruptedException, IOException {
+        CallSmtpApiImpl test = new CallSmtpApiImpl();  
         if (args.length < 3) {  // Check command line arguments
             System.out.printf("Usage: %s <host:port> <message-vpn> <client-username> [password]%n%n", SAMPLE_NAME);
             System.exit(-1);
@@ -97,8 +101,8 @@ public class GuaranteedSubscriber {
         } catch (RuntimeException e) {
             logger.error(e);
             System.err.printf("%n*** Could not establish a connection to queue '%s': %s%n", QUEUE_NAME, e.getMessage());
-            System.err.println("Create queue using PubSub+ Manager WebGUI, and add subscription "+
-                    GuaranteedNonBlockingPublisher.TOPIC_PREFIX+"*/pers/>");
+            // System.err.println("Create queue using PubSub+ Manager WebGUI, and add subscription "+
+            //         GuaranteedNonBlockingPublisher.TOPIC_PREFIX+"*/pers/>");
             System.err.println("  or see the SEMP CURL scripts inside the 'semp-rest-api' directory.");
             // could also try to retry, loop and retry until successfully able to connect to the queue
             System.err.println("NOTE: see HowToEnableAutoCreationOfMissingResourcesOnBroker.java sample for how to construct queue with consumer app.");
@@ -119,7 +123,8 @@ public class GuaranteedSubscriber {
             // Messages are removed from the broker queue when the ACK is received.
             // Therefore, DO NOT ACK until all processing/storing of this message is complete.
             // NOTE that messages can be acknowledged from any thread.
-        	System.out.println(message.toString() + "HEHE");
+        	String returnedmessage = test.callSmtpTest(message.toString());
+            System.out.println(returnedmessage);
             receiver.ack(message);  // ACKs are asynchronous
         });
 
