@@ -1,0 +1,33 @@
+version: '3.9'
+
+services:  
+  server:
+      container_name: hello-world
+      depends_on:
+          - db
+      build:
+          context: ..
+          dockerfile: Dockerfile
+      image: helloworld_api:latest
+      environment:
+        - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/### set your desired USERNAME      
+        - SPRING_DATASOURCE_USERNAME=###  set your desired USERNAME
+        - SPRING_DATASOURCE_PASSWORD=### set your desired PASSWORD
+        - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      # ports:
+      #   - 8080:8080
+
+  db:
+      image: 'postgres:13.1-alpine'
+      container_name: db
+      environment:
+          - POSTGRES_USER=pgu
+          - POSTGRES_PASSWORD=### use your desired PASSWORD
+      volumes:
+        - "./init.sql:/tmp/init.sql"
+        - "./database:/var/lib/postgresql/data"
+
+networks:
+  default:
+    name: default
+
